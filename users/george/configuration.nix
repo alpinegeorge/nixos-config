@@ -27,6 +27,7 @@
       sccache
       unrar
       unzip
+      vscode
       xclip
     ];
   };
@@ -64,6 +65,38 @@
 
   # Setup Neovim and tmux
   programs.neovim.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      # Headless browser dependencies
+      atk
+      cairo
+      dbus
+      expat
+      fontconfig
+      gcc
+      gio-sharp
+      glib
+      gtk3
+      libgbm
+      libx11
+      libxcb
+      libxcomposite
+      libxcursor
+      libxdamage
+      libxext
+      libxfixes
+      libxkbcommon
+      libxrandr
+      libxrender
+      libxft
+      libxi
+      nspr
+      nss
+      pango
+      rubyPackages.gdk3
+    ];
+  };
   programs.tmux.enable = true;
 
   # Setup user environment

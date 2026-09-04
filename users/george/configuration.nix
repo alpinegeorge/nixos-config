@@ -27,7 +27,13 @@
       sccache
       unrar
       unzip
+      vscode
       xclip
+
+      # Language servers for nvim
+      lua-language-server
+      rust-analyzer
+      typescript # For `tsc`
     ];
   };
 
@@ -70,6 +76,7 @@
   environment = {
     shellAliases = {
       rebuild-system = "sudo nixos-rebuild switch --flake /etc/nixos#george";
+      sudo = "sudo -E -s";
       update-system = "sudo nix flake update /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos#george";
     };
   };

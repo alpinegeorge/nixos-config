@@ -39,6 +39,117 @@ in
     };
   };
 
+  programs.nixvim = {
+    enable = true;
+    defaultEditor = true;
+    nixpkgs.useGlobalPackages = true;
+
+    extraPackages = with pkgs; [
+      lldb
+    ];
+
+    plugins = {
+      oil.enable = true;
+      dap.enable = true;
+      dap-ui.enable = true;
+      dap-virtual-text.enable = true;
+      rustaceanvim.enable = true;
+    };
+
+    keymaps = [
+      {
+        mode = "n";
+        key = "<F5>";
+        action = "<cmd>lua require('dap').continue()<CR>";
+        options.desc = "Debug: Start/Continue";
+      }
+      {
+        mode = "n";
+        key = "<F10>";
+        action = "<cmd>lua require('dap').step_over()<CR>";
+        options.desc = "Debug: Step Over";
+      }
+      {
+        mode = "n";
+        key = "<F11>";
+        action = "<cmd>lua require('dap').step_into()<CR>";
+        options.desc = "Debug: Step Into";
+      }
+      {
+        mode = "n";
+        key = "<F12>";
+        action = "<cmd>lua require('dap').step_out()<CR>";
+        options.desc = "Debug: Step Out";
+      }
+      {
+        mode = "n";
+        key = "<Leader>b";
+        action = "<cmd>lua require('dap').toggle_breakpoint()<CR>";
+        options.desc = "Debug: Toggle Breakpoint";
+      }
+      {
+        mode = "n";
+        key = "<Leader>B";
+        action = "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
+        options.desc = "Debug: Conditional Breakpoint";
+      }
+      {
+        mode = "n";
+        key = "<Leader>dr";
+        action = "<cmd>lua require('dap').repl.open()<CR>";
+        options.desc = "Debug: Open REPL";
+      }
+      {
+        mode = "n";
+        key = "<Leader>dl";
+        action = "<cmd>lua require('dap').run_last()<CR>";
+        options.desc = "Debug: Run Last";
+      }
+    ];
+
+    extraConfigLua = ''
+      local dap = require("dap")
+      local dapui = require("dapui")
+
+      dapui.setup()
+
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+
+      dap.adapters.codelldb = {
+        type = "server",
+        port = "''${port}",
+        executable = {
+          command = "${pkgs.lldb}/bin/lldb-vscode",
+          args = { "--port", "''${port}" },
+        },
+      }
+
+      dap.configurations.rust = {
+        {
+          name = "Launch executable",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+          end,
+          cwd = "''${workspaceFolder}",
+          stopOnEntry = false,
+        },
+      }
+    '';
+
+    lsp.servers.nil_ls.enable = true;
+    lsp.servers.rust_analyzer.enable = true;
+  };
+
   services.gpg-agent = {
     enable = true;
     enableExtraSocket = true;

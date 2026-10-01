@@ -75,9 +75,9 @@
   # Setup user environment
   environment = {
     shellAliases = {
-      rebuild-system = "sudo nixos-rebuild switch --flake /etc/nixos#george";
-      sudo = "sudo -E -s";
-      update-system = "sudo nix flake update /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos#george";
+      rebuild-system = "\\sudo -H nixos-rebuild switch --flake /etc/nixos#george";
+      rootshell = "sudo -E -s";
+      update-system = "\\sudo -H nix flake update /etc/nixos && \\sudo -H nixos-rebuild switch --flake /etc/nixos#george";
     };
   };
 

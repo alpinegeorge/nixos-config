@@ -61,6 +61,8 @@
     networkmanagerapplet
   ];
 
+  services.pcscd.enable = true;
+
   # Compatibility state version (Do not change unless upgrading across major releases)
   system.stateVersion = "26.05";
 }
